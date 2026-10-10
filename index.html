@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sistema de registro y cálculo de pagos de Fiestas y Eventos Tarragona.">
+  <title>Fiestas y Eventos Tarragona</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-mark">T</div>
+    <div>
+      <p class="eyebrow">GESTIÓN DE EVENTOS</p>
+      <h1>Fiestas y Eventos <span>Tarragona</span></h1>
+    </div>
+    <div class="topbar-note"><span class="status-dot"></span> Sistema local</div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <p class="eyebrow">PANEL DE CONTROL</p>
+      <h2>Administra tus fiestas <span>sin complicaciones</span></h2>
+      <p class="hero-copy">Registra cada evento, calcula el valor a cobrar y consulta los acumulados del mes.</p>
+    </section>
+
+    <section class="stats-grid" aria-label="Resumen mensual">
+      <article class="stat-card"><div class="stat-label">Fiestas registradas</div><div class="stat-value" id="statEvents">0</div><div class="stat-foot">Eventos guardados</div></article>
+      <article class="stat-card"><div class="stat-label">Total de invitados</div><div class="stat-value" id="statGuests">0</div><div class="stat-foot">Personas atendidas</div></article>
+      <article class="stat-card"><div class="stat-label">Total de horas</div><div class="stat-value" id="statHours">0</div><div class="stat-foot">Horas de celebración</div></article>
+      <article class="stat-card highlight"><div class="stat-label">Valor total calculado</div><div class="stat-value money" id="statMoney">$0</div><div class="stat-foot">Suma de todos los eventos</div></article>
+    </section>
+
+    <div class="content-grid">
+      <section class="panel form-panel">
+        <div class="panel-heading">
+          <div><p class="eyebrow">NUEVO REGISTRO</p><h3>Datos de la fiesta</h3></div>
+          <span class="step-number">01</span>
+        </div>
+        <form id="eventForm">
+          <label for="cedula">Cédula del contratante</label>
+          <input id="cedula" name="cedula" type="text" inputmode="numeric" maxlength="20" placeholder="Ej. 1144000000" required>
+          <div class="field-row">
+            <div><label for="invitados">Cantidad de invitados</label><input id="invitados" name="invitados" type="number" min="1" step="1" placeholder="Ej. 150" required></div>
+            <div><label for="horas">Duración (horas)</label><input id="horas" name="horas" type="number" min="1" step="1" placeholder="Ej. 5" required></div>
+          </div>
+          <div class="rules-preview">
+            <div><span>Tarifa por invitado</span><strong id="ratePreview">Se calcula automáticamente</strong></div>
+            <div><span>Cuota por duración</span><strong id="feePreview">Se calcula automáticamente</strong></div>
+          </div>
+          <button type="submit" class="btn-primary"><span>＋</span> Calcular y guardar fiesta</button>
+          <p class="form-note">Los campos deben contener datos válidos y positivos.</p>
+          <div id="formMessage" class="message" role="status" aria-live="polite"></div>
+        </form>
+      </section>
+
+      <section class="panel rules-panel">
+        <div class="panel-heading"><div><p class="eyebrow">REGLAS DE NEGOCIO</p><h3>Tarifas del servicio</h3></div><span class="step-number">02</span></div>
+        <h4>Valor por invitado</h4>
+        <div class="rule-line"><span>1–100 invitados</span><strong>$8.000</strong></div>
+        <div class="rule-line"><span>101–500 invitados</span><strong>$6.000</strong></div>
+        <div class="rule-line"><span>Más de 500 invitados</span><strong>$4.000</strong></div>
+        <div class="rule-divider"></div>
+        <h4>Cuota adicional por duración</h4>
+        <div class="rule-line"><span>1–3 horas</span><strong>$100.000</strong></div>
+        <div class="rule-line"><span>4–6 horas</span><strong>$200.000</strong></div>
+        <div class="rule-line"><span>Más de 6 horas</span><strong>$300.000</strong></div>
+        <div class="formula"><span>FÓRMULA</span><p>(Invitados × tarifa) + cuota por duración</p></div>
+      </section>
+    </div>
+
+    <section class="panel records-panel">
+      <div class="panel-heading records-heading">
+        <div><p class="eyebrow">HISTORIAL</p><h3>Fiestas registradas</h3><p class="subheading">Los registros se conservan en este navegador.</p></div>
+        <div class="record-actions"><input type="search" id="searchInput" placeholder="Buscar por cédula..." aria-label="Buscar por cédula"><button id="deleteAllBtn" class="btn-danger-outline" type="button">Borrar todos</button></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Cédula</th><th>Invitados</th><th>Horas</th><th>Tarifa/persona</th><th>Cuota</th><th>Total a pagar</th><th>Acción</th></tr></thead>
+          <tbody id="eventsTable"><tr><td colspan="7" class="empty-state">Aún no hay fiestas registradas. Completa el formulario para comenzar.</td></tr></tbody>
+        </table>
+      </div>
+      <div class="table-footer"><span id="visibleCount">0 registros</span><span>Los totales se actualizan al guardar o eliminar.</span></div>
+    </section>
+
+    <section class="panel monthly-panel">
+      <div class="panel-heading"><div><p class="eyebrow">CONSOLIDADO</p><h3>Resumen de fiestas por duración</h3></div><span class="step-number">03</span></div>
+      <div class="monthly-grid">
+        <div class="monthly-card"><span class="duration-pill">1–3 horas</span><strong id="countShort">0</strong><span>fiestas</span></div>
+        <div class="monthly-card"><span class="duration-pill">4–6 horas</span><strong id="countMedium">0</strong><span>fiestas</span></div>
+        <div class="monthly-card"><span class="duration-pill">Más de 6 horas</span><strong id="countLong">0</strong><span>fiestas</span></div>
+      </div>
+      <p class="small-note">Este consolidado suma todos los eventos guardados en el navegador. Puedes borrar registros individuales o limpiar el historial completo.</p>
+    </section>
+
+    <footer><span>Fiestas y Eventos Tarragona</span><span>HTML · CSS · JavaScript</span></footer>
+  </main>
+
+  <dialog id="confirmDialog" class="confirm-dialog">
+    <form method="dialog"><p class="eyebrow">CONFIRMAR ACCIÓN</p><h3 id="dialogTitle">¿Borrar registro?</h3><p id="dialogText">Esta acción no se puede deshacer.</p><div class="dialog-actions"><button value="cancel" class="btn-secondary">Cancelar</button><button value="confirm" class="btn-danger">Sí, borrar</button></div></form>
+  </dialog>
+  <script src="script.js"></script>
+</body>
+</html>
